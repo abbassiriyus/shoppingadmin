@@ -1,55 +1,83 @@
+import React, { Component } from 'react'
+import { Button, Card, CardBody, CardHeader, CardImg, CardText, CardTitle, Col, Form, FormGroup, FormText, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, Row, Table } from 'reactstrap';
+// import Button from 'react-bootstrap/Button';
+// import Modal from 'react-bootstrap/Modal';
 import Page from 'components/Page';
-import React, { useEffect } from 'react';
-import { Card, CardBody, CardHeader, Col, Row, Table } from 'reactstrap';
-import Button from 'react-bootstrap/Button';
-import Modal from 'react-bootstrap/Modal';
-import { useState } from 'react';
-import { getProduct, postProduct, PostProduct } from '../host/config';
+import { getCategorys, getProduct, getSubCategorys, postProduct } from '../host/config';
 
 
-const TablePage = () => { 
 
-  const [data, setData] = useState([])
+export default class tablepage extends Component {
 
-  const [show, setShow] = useState(false);
+state={
+    data:[],
+    category:[],
+    subcategory:[],
+    modal:false
+}
 
-  const getProduct1 = () =>{
-    getProduct().then(res=>{
-      //  state
-    setData(res.data)
-    // console.log(res.data);
-      })
-      // console.log(data);
+getCategory=()=>{
+    getCategorys().then(res=>{
+    //  this.state
+  this.setState({category:res.data})
+  console.log(res.data);
+    })
+    console.log(this.state.category);
   }
 
 
-const postProduct1 =() =>{
-    const data12={
-      "title": document.querySelector('#newTitle').value,
-      "category":  document.querySelector('#newCategory').value,
-      "subcategory":  document.querySelector('#newSubcategory').value,
-      "description":document.querySelector('#newDescription').value,
-      "price":document.querySelector('#newPrice').value,
-      "characteristics":document.querySelector('#newCharacteritics').value,
-      "image":document.querySelector('#newImage').value
-    }
-    postProduct(data12).then(res=>{
-      console.log(res);
-    })
-    console.log(data12);
-    // toggle1()
-    getProduct1()
+  getSubCategory=()=>{
+      getSubCategorys().then(res=>{
+          this.setState({subcategory:res.data})
+          console.log(res.data);
+      })
+      console.log(this.state.subcategory)
+  }
+
+
+handleShow=()=>{
+    this.setState({modal:true})
+}
+handleClose=()=>{
+    this.setState({modal:false})
+}
+postProduct1=()=>{
+    var data1={
+        "slug":document.querySelector('#newTitle').value,
+        "title": document.querySelector('#newTitle').value,
+        "category":  document.querySelector('#category').value,
+        "subcategory":  document.querySelector('#subcategory').value,
+        "description":document.querySelector('#newDescription').value,
+        "price":document.querySelector('#newPrice').value,
+        "characteristics":document.querySelector('#newCharacteritics').value,
+        "image":document.querySelector('#newImage').value
+      }
+
+      postProduct(data1).then(res =>{
+          this.setState(res.data)
+          console.log(res.data);
+      })
+}
+
+getProduct1 = () =>{
+    getProduct().then(res=>{
+      //  state
+    this.setState(res.data)
+    console.log(res.data);
+      })
+      console.log(this.state.data);
+  }
+componentDidMount(){
+    this.getCategory()
+    this.getSubCategory()
+    getProduct()
 }
 
 
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
-useEffect(()=>{
-  getProduct1()}
-)
-  
-  return (
-    <Page
+  render() {
+    return (
+      <>
+            <Page
       title="Tables"
       breadcrumbs={[{ name: 'tables', active: true }]}
       className="TablePage"
@@ -60,11 +88,11 @@ useEffect(()=>{
         <Col>
           <Card className="mb-3">
             <CardHeader>
-              <button onClick={handleShow} className="btn btn-primary">Create</button>
+              <button onClick={()=>this.handleShow()} className="btn btn-primary">Create</button>
               
             </CardHeader>
             <CardBody>
-              {data.map(item=>{
+              {this.state.data.map(item=>{
                 return <Table responsive>
                 <thead>
                   <tr>
@@ -93,28 +121,26 @@ useEffect(()=>{
           </Card>
         </Col>
       </Row>
-      <Modal show={show} className="NewProduct" onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Add new card</Modal.Title>
-        </Modal.Header>
-        <Modal.Body> 
-
-            <div className='mb-3'>
-              <button className='btn btn-primary english' onClick="Eng()">Eng</button>
-              <button className='btn btn-primary ml-2'>Ru</button>
-              <button className='btn btn-primary ml-2'>Uz</button>
-            </div>
-            <div className='mb-2'>
+      <Modal isOpen={this.state.modal}>
+                  <ModalHeader >Modal title</ModalHeader>
+                  <ModalBody>
+                  <div className='mb-2'>
             <h3>Name for new card</h3>
             <input type="text" id="newTitle" placeholder="New card name" required/>
             </div>
             <div className='mt-3'>
               <h3>Category of new card</h3>
-              <input type="text" id="newCategory" placeholder="New card category" requiered/>
-            </div>
+              <Input type="select" id="category" name="select">
+                   {this.state.category.map(item=>{ return <option>{item.title}</option>})}
+                 
+                  </Input>     
+           </div>
             <div className='mt-3'>
               <h3>Sub-Category of new card</h3>
-              <input type="text" id="newSubcategory" placeholder="New card sub-category" requiered/>
+              <Input type="select" id="subcategory" name="select">
+                   {this.state.subcategory.map(item1=>{ return <option>{item1.title}</option>})}
+                 
+              </Input>
             </div>
             <div className='mt-3'>
               <h3>Description of new card</h3>
@@ -132,20 +158,18 @@ useEffect(()=>{
               <h3>Image of new card</h3>
               <input type="file" id="newImage" requiered/>
             </div>
-       </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Close
-          </Button>
-          <Button variant="primary" onClick={()=>postProduct1()}>
-            Save Changes
-          </Button>
-        </Modal.Footer>
-      </Modal>
+                  </ModalBody>
+                  <ModalFooter>
+                    <Button color="primary" onClick={this.postProduct1}>
+                     save
+                    </Button>
+                    <Button color="secondary" onClick={this.handleClose}>
+                      Cancel
+                    </Button>
+                  </ModalFooter>
+                </Modal>
     </Page>
-
-    
-  );
-};
-
-export default TablePage;
+      </>
+    )
+  }
+}
