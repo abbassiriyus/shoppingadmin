@@ -80,7 +80,7 @@ class Header extends React.Component {
 
     return (
       <Navbar light expand className={bem.b('bg-white')}>
-        <Nav navbar className="mr-2">
+      <Nav navbar className="mr-2">
           <Button outline onClick={this.handleSidebarControlButton}>
             <MdClearAll size={25} />
           </Button>
@@ -89,7 +89,7 @@ class Header extends React.Component {
           <SearchInput />
         </Nav>
 
-        <Nav navbar className={bem.e('nav-right')}>
+         {/*  <Nav navbar className={bem.e('nav-right')}>
           <NavItem className="d-inline-flex">
             <NavLink id="Popover1" className="position-relative">
               {isNotificationConfirmed ? (
@@ -140,7 +140,7 @@ class Header extends React.Component {
                   text="Last updated 3 mins ago"
                   className="border-light"
                 >
-                  <ListGroup flush>
+                   <ListGroup flush>
                     <ListGroupItem tag="button" action className="border-light">
                       <MdPersonPin /> Profile
                     </ListGroupItem>
@@ -159,12 +159,12 @@ class Header extends React.Component {
                     <ListGroupItem tag="button" action className="border-light">
                       <MdExitToApp /> Signout
                     </ListGroupItem>
-                  </ListGroup>
+                  </ListGroup> 
                 </UserCard>
               </PopoverBody>
             </Popover>
           </NavItem>
-        </Nav>
+        </Nav> */}
       </Navbar>
     );
   }

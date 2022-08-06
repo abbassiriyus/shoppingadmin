@@ -1,15 +1,14 @@
 import Page from 'components/Page';
 import React,{Component} from 'react';
-import { Button, Card, CardBody, CardImg, CardText, CardTitle, Col, Form, FormGroup, FormText, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, Row } from 'reactstrap';
-// import { Button, ButtonGroup, ButtonToolbar, Card, CardBody, CardHeader, CardText, Col, DropdownItem, DropdownMenu, DropdownToggle, Row, UncontrolledButtonDropdown } from 'reactstrap';
-// import bg1Image from 'assets/img/bg/background_640-1.jpg';
-import { getCategorys, PostCategorys } from '../host/config';
+import { Alert, Button, Card, CardBody, CardImg, CardText, CardTitle, Col, Form, FormGroup, FormText, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, Row } from 'reactstrap';
+import { deleteCategorys, getCategorys, PostCategorys } from '../host/config';
 
 
 export default class ButtonGroupPage extends Component {
   state = {
     modal: false,
-    data:[]
+    data:[],
+    file:null
   };
 getCategory=()=>{
   getCategorys().then(res=>{
@@ -19,20 +18,35 @@ console.log(res.data);
   })
   console.log(this.state.data);
 }
+deleteCategory=(slug)=>{
+  deleteCategorys(slug).then(res=>{
+    this.getCategory() 
+  })
+}
 
-postCategory=()=>{
+handleFile(e) {
+  let file1 = e.target.files[0];
+  // this.setState({ file:file1 });
+//   var formData = new FormData();
+// var imagefile = document.querySelector('#file').value;
+// formData.append("image", imagefile.files[0]);
+console.log(file1);
+this.setState({file:file1})
+
+
+}
+postCategory=(e)=>{
   var data={
     "title_en": document.querySelector('#encategory').value,
     "title_ru":  document.querySelector('#rucategory').value,
     "title_uz":  document.querySelector('#uzcategory').value,
-    "imageURL":document.querySelector('#newImage')[0]
+    "image":this.state.file
   }
   PostCategorys(data).then(res=>{
-    console.log(res);
+    // alert('malumot tushdi')
+      this.getCategory()
   })
-  console.log(data);
   this.toggle1()
-  this.getCategory()
 }
   toggle =() => {
     this.setState({modal:true})
@@ -45,6 +59,7 @@ postCategory=()=>{
   componentDidMount(){
     setTimeout(() => {
         this.getCategory()
+
     }, 100);
   
   }
@@ -67,16 +82,9 @@ return <Col lg={6} md={12} sm={12} xs={12} className="mb-3">
             />
             <CardBody>
               <CardTitle>{item.title}</CardTitle>
-              <CardText>title_en:{item.title_en}
-              </CardText>
-              <CardText>
-              title_uz:{item.title_uz}
-                </CardText>
-                <CardText>
-                title_ru:{item.title_ru}
-                </CardText>
+       
               <Button color="success">edit</Button>
-              <Button color="secondary ml-2">delete</Button>
+              <Button color="secondary ml-2" onClick={()=>this.deleteCategory(item.slug)}  >delete</Button>
             </CardBody>
           </Card>
         </Col>})}</Row>
@@ -113,13 +121,13 @@ return <Col lg={6} md={12} sm={12} xs={12} className="mb-3">
                 </FormGroup>
                  <FormGroup>
                   <Label for="exampleImage">Image</Label>
-                  <Input type="file" id="newImage">
+                  <Input onInput={(e)=>this.handleFile(e)} id="file" type="file" >
                   </Input>
                 </FormGroup>
               </Form>
                   </ModalBody>
                   <ModalFooter>
-                    <Button color="primary" onClick={this.postCategory}>
+                    <Button color="primary" onClick={(e)=>this.postCategory(e)}>
                      save
                     </Button>
                     <Button color="secondary" onClick={this.toggle1}>

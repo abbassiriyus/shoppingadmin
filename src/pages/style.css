@@ -1,0 +1,15 @@
+.card12{
+    /* height: 300px; */
+    background:url("https://64.media.tumblr.com/3033b53e473be51c6b963fcde4a52ccf/tumblr_nblocyQbfM1ts4htvo1_500.gif");
+    border-radius: 30px;
+    margin-left: 10px;
+    width: 100%;
+    color: white;
+    margin: auto;
+    text-align: center;
+    padding-top: 40px;
+    padding-bottom: 40px;
+}
+.card12 h1{
+    font-size: 50px;
+}

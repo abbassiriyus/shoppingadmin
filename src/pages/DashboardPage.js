@@ -1,65 +1,94 @@
-import { AnnouncementCard, TodosCard } from 'components/Card';
-import HorizontalAvatarList from 'components/HorizontalAvatarList';
-import MapWithBubbles from 'components/MapWithBubbles';
 import Page from 'components/Page';
-import ProductMedia from 'components/ProductMedia';
-import SupportTicket from 'components/SupportTicket';
-import UserProgressTable from 'components/UserProgressTable';
-import { IconWidget, NumberWidget } from 'components/Widget';
-import { getStackLineChart, stackLineChartOptions } from 'demos/chartjs';
-import {
-  avatarsData,
-  chartjs,
-  productsData,
-  supportTicketsData,
-  todosData,
-  userProgressTableData,
-} from 'demos/dashboardPage';
+import {  NumberWidget } from 'components/Widget';
+import './style.css'
 import React from 'react';
-import { Bar, Line } from 'react-chartjs-2';
-import {
-  MdBubbleChart,
-  MdInsertChart,
-  MdPersonPin,
-  MdPieChart,
-  MdRateReview,
-  MdShare,
-  MdShowChart,
-  MdThumbUp,
-} from 'react-icons/md';
-import InfiniteCalendar from 'react-infinite-calendar';
-import {
-  Badge,
-  Button,
-  Card,
-  CardBody,
-  CardDeck,
-  CardGroup,
-  CardHeader,
-  CardTitle,
-  Col,
-  ListGroup,
-  ListGroupItem,
-  Row,
-} from 'reactstrap';
-import { getColor } from 'utils/colors';
-
-const today = new Date();
-const lastWeek = new Date(
-  today.getFullYear(),
-  today.getMonth(),
-  today.getDate() - 7,
-);
+import { Card, Col, Row } from 'reactstrap';
+import { getCategorys, getCompany, getContacts, getImages, getProduct, getPromotions, getSubCategorys, postCopany } from '../host/config';
+import axios from 'axios';
 
 class DashboardPage extends React.Component {
-  componentDidMount() {
-    // this is needed, because InfiniteCalendar forces window scroll
-    window.scrollTo(0, 0);
+  state={
+   category:[],
+   product:[],
+   subCategory:[],
+   aksiya:[],
+   data:[],
+   file:[]
   }
 
+
+
+  handleFile(e) {
+    let file1 = e.target.files[0];
+  // console.log(file1);
+  this.setState({file:file1})
+  }
+ getcategory=()=>{
+   getCategorys().then(res=>{
+     this.setState({category:res.data})
+   })
+ }
+getProduct1=()=>{
+  getProduct().then(res=>{
+    this.setState({product:res.data})
+  })
+}
+getSubCategory=()=>{
+  getSubCategorys().then(res=>{
+    this.setState({subCategory:res.data})
+  })
+}
+getImaga=()=>{
+  getPromotions().then(res=>{
+    this.setState({aksiya:res.data})
+  })
+}
+  postContact=()=>{
+    var contacts={
+      "name": document.querySelector(''),
+      // "text": "Q",
+    }
+    getContacts(contacts).then(res=>{
+      this.getContact()
+    })
+  }
+
+
+
+
+
+getCompanys=()=>{
+getCompany().then(res=>{
+console.log(res.data);
+})
+}
+postCompanys=()=>{
+ var data={
+  "created_at": document.querySelector('#created_at').value,
+  "modified_at": document.querySelector('#modified_at').value,
+  "logo": document.querySelector('#logo').value,
+  "phone": document.querySelector('#phone').value,
+  "about_img": document.querySelector('#about_img').value,
+  "team": document.querySelector('#team').value,
+  "team_story": document.querySelector('#team_story').value,
+  "longitude": "123324.2342342000000000000000000",
+  "latitude": "12432432.2343530000000000000000000",
+  "created": 1,
+  "modified": 1
+}
+postCopany(data).then(res=>{    
+  this.getCompanys();
+})
+}
+componentDidMount(){
+  this.getcategory()
+  this.getImaga()
+  this.getSubCategory()
+  this.getProduct1()
+
+}
+
   render() {
-    const primaryColor = getColor('primary');
-    const secondaryColor = getColor('secondary');
 
     return (
       <Page
@@ -69,339 +98,77 @@ class DashboardPage extends React.Component {
       >
         <Row>
           <Col lg={3} md={6} sm={6} xs={12}>
-            <NumberWidget
-              title="Total Profit"
-              subtitle="This month"
-              number="9.8k"
-              color="secondary"
-              progress={{
-                value: 75,
-                label: 'Last month',
-              }}
-            />
+                <div class="bg-info w-100 card12">
+                    <h1>{this.state.product.length}</h1>
+                    <p>Product</p>
+               </div>
           </Col>
 
           <Col lg={3} md={6} sm={6} xs={12}>
-            <NumberWidget
-              title="Monthly Visitors"
-              subtitle="This month"
-              number="5,400"
-              color="secondary"
-              progress={{
-                value: 45,
-                label: 'Last month',
-              }}
-            />
+     <div className="card12">
+     <h1>{this.state.category.length}</h1>
+                    <p>Category</p>
+       </div>
           </Col>
 
           <Col lg={3} md={6} sm={6} xs={12}>
-            <NumberWidget
-              title="New Users"
-              subtitle="This month"
-              number="3,400"
-              color="secondary"
-              progress={{
-                value: 90,
-                label: 'Last month',
-              }}
-            />
+     <div className="card12">
+     <h1>{this.state.subCategory.length}</h1>
+                    <p>SubCategory</p>
+       </div>
           </Col>
 
           <Col lg={3} md={6} sm={6} xs={12}>
-            <NumberWidget
-              title="Bounce Rate"
-              subtitle="This month"
-              number="38%"
-              color="secondary"
-              progress={{
-                value: 60,
-                label: 'Last month',
-              }}
-            />
+        <div className="card12">
+        <h1>{this.state.aksiya.length}</h1>
+                    <p>Promotion</p>
+          </div>
           </Col>
         </Row>
 
-        <Row>
-          <Col lg="8" md="12" sm="12" xs="12">
-            <Card>
-              <CardHeader>
-                Total Revenue{' '}
-                <small className="text-muted text-capitalize">This year</small>
-              </CardHeader>
-              <CardBody>
-                <Line data={chartjs.line.data} options={chartjs.line.options} />
-              </CardBody>
-            </Card>
-          </Col>
+        <div className='mt-3'>
+                <h5>Description of new card</h5>
+                <input type="text" id="newDescription" placeholder="Description card category" requiered />
+              </div>
+              <div className='mt-3'>
+                <h5>Company logo</h5>
+                <input className='d-block mt-2' type="file" placeholder='logo' name="" id="logo" />
+              </div>
+              <div className='mt-3'>
+                <h5>Characteristics of new card</h5>
+                <input type="text" id="newCharacteritics" placeholder="New card characeristics" />
+              </div>
+              <div className='mt-3'>
+                <h5>Image of new card</h5>
+                <input type="file" onInput={(e) => this.handleFile(e)} id="file" requiered />
+              </div>
+              <div className='mt-3'>
+                <h5>Description of new card</h5>
+                <input type="text" id="newDescription" placeholder="Description card category" requiered />
+              </div>
+              <div className='mt-3'>
+                <h5>Price of new card</h5>
+                <input type="number" id="newPrice" placeholder="New card price" requiered />
+              </div>
+              <div className='mt-3'>
+                <h5>Characteristics of new card</h5>
+                <input type="text" id="newCharacteritics" placeholder="New card characeristics" />
+              </div>
+              <div className='mt-3'>
+                <h5>Image of new card</h5>
+                <input type="file" onInput={(e) => this.handleFile(e)} id="file" requiered />
+              </div>
 
-          <Col lg="4" md="12" sm="12" xs="12">
-            <Card>
-              <CardHeader>Total Expense</CardHeader>
-              <CardBody>
-                <Bar data={chartjs.bar.data} options={chartjs.bar.options} />
-              </CardBody>
-              <ListGroup flush>
-                <ListGroupItem>
-                  <MdInsertChart size={25} color={primaryColor} /> Cost of sales{' '}
-                  <Badge color="secondary">$3000</Badge>
-                </ListGroupItem>
-                <ListGroupItem>
-                  <MdBubbleChart size={25} color={primaryColor} /> Management
-                  costs <Badge color="secondary">$1200</Badge>
-                </ListGroupItem>
-                <ListGroupItem>
-                  <MdShowChart size={25} color={primaryColor} /> Financial costs{' '}
-                  <Badge color="secondary">$800</Badge>
-                </ListGroupItem>
-                <ListGroupItem>
-                  <MdPieChart size={25} color={primaryColor} /> Other operating
-                  costs <Badge color="secondary">$2400</Badge>
-                </ListGroupItem>
-              </ListGroup>
-            </Card>
-          </Col>
-        </Row>
+        <input className='d-block mt-2' type="date" placeholder='created_at' name="" id="created_at"/>
+        <input className='d-block mt-2' type="date" placeholder='modified_at' name="" id="modified_at"/>  
+        <input className='d-block mt-2' type="tel" placeholder='phone' id='phone' />
 
-        <CardGroup style={{ marginBottom: '1rem' }}>
-          <IconWidget
-            bgColor="white"
-            inverse={false}
-            icon={MdThumbUp}
-            title="50+ Likes"
-            subtitle="People you like"
-          />
-          <IconWidget
-            bgColor="white"
-            inverse={false}
-            icon={MdRateReview}
-            title="10+ Reviews"
-            subtitle="New Reviews"
-          />
-          <IconWidget
-            bgColor="white"
-            inverse={false}
-            icon={MdShare}
-            title="30+ Shares"
-            subtitle="New Shares"
-          />
-        </CardGroup>
+        <input className='d-block mt-2' type="file" name="" id="about_img" />
+        <input className='d-block mt-2' type="text" placeholder='team' name="" id="team" />
+        <input className='d-block mt-2' type="text" placeholder='team_story' name="" id="team_story" />
 
-        <Row>
-          <Col md="6" sm="12" xs="12">
-            <Card>
-              <CardHeader>New Products</CardHeader>
-              <CardBody>
-                {productsData.map(
-                  ({ id, image, title, description, right }) => (
-                    <ProductMedia
-                      key={id}
-                      image={image}
-                      title={title}
-                      description={description}
-                      right={right}
-                    />
-                  ),
-                )}
-              </CardBody>
-            </Card>
-          </Col>
-
-          <Col md="6" sm="12" xs="12">
-            <Card>
-              <CardHeader>New Users</CardHeader>
-              <CardBody>
-                <UserProgressTable
-                  headers={[
-                    <MdPersonPin size={25} />,
-                    'name',
-                    'date',
-                    'participation',
-                    '%',
-                  ]}
-                  usersData={userProgressTableData}
-                />
-              </CardBody>
-            </Card>
-          </Col>
-        </Row>
-
-        <Row>
-          <Col lg={4} md={4} sm={12} xs={12}>
-            <Card>
-              <Line
-                data={getStackLineChart({
-                  labels: [
-                    'January',
-                    'February',
-                    'March',
-                    'April',
-                    'May',
-                    'June',
-                    'July',
-                  ],
-                  data: [0, 13000, 5000, 24000, 16000, 25000, 10000],
-                })}
-                options={stackLineChartOptions}
-              />
-              <CardBody
-                className="text-primary"
-                style={{ position: 'absolute' }}
-              >
-                <CardTitle>
-                  <MdInsertChart /> Sales
-                </CardTitle>
-              </CardBody>
-            </Card>
-          </Col>
-
-          <Col lg={4} md={4} sm={12} xs={12}>
-            <Card>
-              <Line
-                data={getStackLineChart({
-                  labels: [
-                    'January',
-                    'February',
-                    'March',
-                    'April',
-                    'May',
-                    'June',
-                    'July',
-                  ],
-                  data: [10000, 15000, 5000, 10000, 5000, 10000, 10000],
-                })}
-                options={stackLineChartOptions}
-              />
-              <CardBody
-                className="text-primary"
-                style={{ position: 'absolute' }}
-              >
-                <CardTitle>
-                  <MdInsertChart /> Revenue
-                </CardTitle>
-              </CardBody>
-            </Card>
-          </Col>
-          <Col lg={4} md={4} sm={12} xs={12}>
-            <Card>
-              <Line
-                data={getStackLineChart({
-                  labels: [
-                    'January',
-                    'February',
-                    'March',
-                    'April',
-                    'May',
-                    'June',
-                    'July',
-                  ],
-                  data: [0, 13000, 5000, 24000, 16000, 25000, 10000].reverse(),
-                })}
-                options={stackLineChartOptions}
-              />
-              <CardBody
-                className="text-primary"
-                style={{ position: 'absolute', right: 0 }}
-              >
-                <CardTitle>
-                  <MdInsertChart /> Profit
-                </CardTitle>
-              </CardBody>
-            </Card>
-          </Col>
-        </Row>
-
-        <Row>
-          <Col lg="4" md="12" sm="12" xs="12">
-            <InfiniteCalendar
-              selected={today}
-              minDate={lastWeek}
-              width="100%"
-              theme={{
-                accentColor: primaryColor,
-                floatingNav: {
-                  background: secondaryColor,
-                  chevron: primaryColor,
-                  color: '#FFF',
-                },
-                headerColor: primaryColor,
-                selectionColor: secondaryColor,
-                textColor: {
-                  active: '#FFF',
-                  default: '#333',
-                },
-                todayColor: secondaryColor,
-                weekdayColor: primaryColor,
-              }}
-            />
-          </Col>
-
-          <Col lg="8" md="12" sm="12" xs="12">
-            <Card inverse className="bg-gradient-primary">
-              <CardHeader className="bg-gradient-primary">
-                Map with bubbles
-              </CardHeader>
-              <CardBody>
-                <MapWithBubbles />
-              </CardBody>
-            </Card>
-          </Col>
-        </Row>
-
-        <CardDeck style={{ marginBottom: '1rem' }}>
-          <Card body style={{ overflowX: 'auto','paddingBottom':'15px','height': 'fit-content','paddingTop': 'inherit'}}>
-            <HorizontalAvatarList
-              avatars={avatarsData}
-              avatarProps={{ size: 50 }}
-            />
-          </Card>
-
-          <Card body style={{ overflowX: 'auto','paddingBottom':'15px','height': 'fit-content','paddingTop': 'inherit'}}>
-            <HorizontalAvatarList
-              avatars={avatarsData}
-              avatarProps={{ size: 50 }}
-              reversed
-            />
-          </Card>
-        </CardDeck>
-
-        <Row>
-          <Col lg="4" md="12" sm="12" xs="12">
-            <AnnouncementCard
-              color="gradient-secondary"
-              header="Announcement"
-              avatarSize={60}
-              name="Jamy"
-              date="1 hour ago"
-              text="Lorem ipsum dolor sit amet,consectetuer edipiscing elit,sed diam nonummy euismod tinciduntut laoreet doloremagna"
-              buttonProps={{
-                children: 'show',
-              }}
-              style={{ height: 500 }}
-            />
-          </Col>
-
-          <Col lg="4" md="12" sm="12" xs="12">
-            <Card>
-              <CardHeader>
-                <div className="d-flex justify-content-between align-items-center">
-                  <span>Support Tickets</span>
-                  <Button>
-                    <small>View All</small>
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardBody>
-                {supportTicketsData.map(supportTicket => (
-                  <SupportTicket key={supportTicket.id} {...supportTicket} />
-                ))}
-              </CardBody>
-            </Card>
-          </Col>
-
-          <Col lg="4" md="12" sm="12" xs="12">
-            <TodosCard todos={todosData} />
-          </Col>
-        </Row>
+        <button className='btn btn-primary mt-2' onClick={()=> this.postCompanys()}>yuborish</button>
+       
       </Page>
     );
   }
